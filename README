@@ -1,0 +1,29 @@
+1. List of the integrated air–sea flux algorithm files 
+
+ 1) List of added files 
+
+ *atmocn_flux_ccpl_kinds.F90: Declare public variables 
+ *atmocn_flux_ccpl_coupling.F90: Register variables used by the air–sea flux algorithm to C-Coupler3 and call the original air–sea flux calculation program
+ *atmocn_flux_ccpl_mod.F90: Make the initialization, execution, and finalization driving subroutines of the air–sea flux algorithm
+
+ 2) List of original air–sea flux algorithm
+ 
+ *shr_kind_mod.F90
+ *shr_const_mod.F90
+ *shr_log_mod.F90
+ *shr_mpi_mod.F90
+ *shr_sys_mod.F90
+ *shr_flux_mod.F90
+
+ 3) make_lib.sh: Reference compilation script 
+
+2.Modifications of CESM
+
+ 1) seq_flux_mct.F90: Add two new subroutines to realise the call of the air–sea flux algorithm by calling the corresponding APIs of the module-integration framework 
+ 
+ *use_ccpl_do_flux_atmocn_init: Prepare model information (model grids, parallel decompositions, and field instances, etc.), and call the initialization API of the module-integration framework to initialize the air–sea flux algorithm
+ *use_ccpl_do_flux_atmocn_run: Call the execution API of the module-integration framework to execute the air–sea flux algorithm, which will automatically transfer the required model variables to the air–sea flux algorithm, and then transfer the updated variables back to the the model.
+ 
+ 2) ccsm_comp_mod.F90: Replace the original call of the air–sea flux algorithm by calling the added subroutines in seq_flux_mct.F90 with the help of compile flag (CCPL_FLUX)
+
+
